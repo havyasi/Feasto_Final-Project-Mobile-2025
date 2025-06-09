@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "smartpantry.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 7;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -23,7 +23,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 "quantity INTEGER, " +
                 "unit TEXT, " +
                 "storage_location TEXT, " +
-                "category TEXT)");
+                "category TEXT, " +
+                "image_url TEXT)");
 
         // Tabel lainnya yang sudah ada
         db.execSQL("CREATE TABLE favorites (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -44,18 +45,18 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Existing upgrade logic...
 
-        // Tambahkan tabel popular_recipes jika belum ada
-        if (oldVersion < 5) {
-            try {
-                db.execSQL("CREATE TABLE IF NOT EXISTS popular_recipes (" +
-                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        "recipe_id INTEGER, " +
-                        "title TEXT, " +
-                        "image_url TEXT, " +
-                        "summary TEXT)");
-            } catch (Exception e) {
-                // Table might already exist
-            }
+        if (oldVersion <= 5) {
+            db.execSQL("DROP TABLE IF EXISTS popular_recipes");
+            db.execSQL("CREATE TABLE popular_recipes (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "recipe_id INTEGER, " +
+                    "title TEXT, " +
+                    "image_url TEXT, " +
+                    "summary TEXT)");
+            db.execSQL("ALTER TABLE ingredients ADD COLUMN image_url TEXT");
+
+            // Repopulate with all 10 recipes
+            populatePopularRecipes(db);
         }
     }
 
@@ -84,6 +85,26 @@ public class DBHelper extends SQLiteOpenHelper {
         insertPopularRecipe(db, 643857, "Falafel Burgers",
                 "https://spoonacular.com/recipeImages/643857-556x370.jpg",
                 "Burger vegetarian dengan falafel yang lezat");
+
+        insertPopularRecipe(db, 648279, "Italian Tuna Pasta",
+                "https://spoonacular.com/recipeImages/648279-556x370.jpg",
+                "Nasi goreng dengan bumbu rempah khas Indonesia");
+
+        insertPopularRecipe(db, 661340, "Spinach Salad with Strawberry Vinaigrette",
+                "https://spoonacular.com/recipeImages/661340-556x370.jpg",
+                "Pasta kerang isi bayam dan jamur dengan saus tomat");
+
+        insertPopularRecipe(db, 632935, "Asparagus Lemon Risotto",
+                "https://spoonacular.com/recipeImages/632935-556x370.jpg",
+                "Sup asparagus dan kacang polong yang sehat dan cepat dibuat");
+
+        insertPopularRecipe(db, 715594, "Homemade Garlic and Basil French Fries",
+                "https://spoonacular.com/recipeImages/715594-556x370.jpg",
+                "Coklat hitam buatan sendiri tanpa bahan pengawet");
+
+        insertPopularRecipe(db, 782601, "Red Kidney Bean Jambalaya",
+                "https://spoonacular.com/recipeImages/782601-556x370.jpg",
+                "Jambalaya kacang merah dengan nasi dan rempah cajun");
     }
 
     private void insertPopularRecipe(SQLiteDatabase db, int recipeId, String title, String imageUrl, String summary) {
@@ -93,6 +114,11 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("image_url", imageUrl);
         values.put("summary", summary);
         db.insert("popular_recipes", null, values);
+    }
+
+    public void refreshPopularRecipes() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        populatePopularRecipes(db);
     }
 
 }

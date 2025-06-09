@@ -7,8 +7,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp">
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,8 +26,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Halo User, \nMau masak apa hari ini?"
-                    android:textSize="24sp"
-                    android:layout_marginBottom="14dp"
+                    android:textSize="22sp"
+                    android:layout_marginBottom="0dp"
                     android:fontFamily="@font/poppins_bold"/>
 
                 <ImageButton
@@ -40,8 +40,6 @@
                     android:contentDescription="Theme toggle button" />
             </RelativeLayout>
 
-
-
             <!-- Ingredient count display -->
             <TextView
                 android:id="@+id/tvIngredientCount"
@@ -49,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:text="Anda memiliki 0 bahan makanan"
                 android:textSize="18sp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="0dp"
                 android:fontFamily="@font/poppins_medium"/>
 
             <TextView
@@ -58,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:text="0 resep favorit"
                 android:textSize="16sp"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="0dp" />
 
             <!-- Section title -->
             <TextView
@@ -66,11 +64,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="3dp"
                 android:paddingHorizontal="0dp"
                 android:text="Resep Populer"
                 android:textSize="21sp"
-                android:textStyle="bold"
                 android:fontFamily="@font/poppins_semibold" />
 
             <!-- Recipe grid - adjust paddingHorizontal to match the TextView -->

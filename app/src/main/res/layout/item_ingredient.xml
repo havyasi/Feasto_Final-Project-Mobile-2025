@@ -1,34 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginHorizontal="8dp"
-    android:layout_marginVertical="4dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="3dp">
+    style="@style/Widget.Foodrink.CardView"
+    android:layout_width="150dp"
+    android:layout_height="200dp"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ingredientImage"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/primary_variant"
+            android:src="@drawable/ic_pantry"
+            android:scaleType="centerCrop"
+            android:contentDescription="Ingredient Image" />
 
         <TextView
             android:id="@+id/tvIngredientName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black" />
+            android:padding="8dp"
+            android:fontFamily="@font/poppins_medium"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/tvIngredientDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:layout_marginTop="4dp"
-            android:textColor="@android:color/darker_gray" />
-
+            android:paddingHorizontal="8dp"
+            android:paddingBottom="8dp"
+            android:fontFamily="@font/poppins"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="12sp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

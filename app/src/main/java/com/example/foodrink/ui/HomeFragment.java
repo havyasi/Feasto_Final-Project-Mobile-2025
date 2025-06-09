@@ -111,6 +111,10 @@ public class HomeFragment extends Fragment {
 
     private void loadPopularRecipes() {
         popularRecipeList.clear();
+
+        // Force refresh the popular recipes table
+        dbHelper.refreshPopularRecipes();
+
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         // Check if table is empty and populate it if needed
@@ -133,12 +137,20 @@ public class HomeFragment extends Fragment {
 
         if (cursor.moveToFirst()) {
             do {
-                int recipeId = cursor.getInt(cursor.getColumnIndex("recipe_id"));
-                String title = cursor.getString(cursor.getColumnIndex("title"));
-                String imageUrl = cursor.getString(cursor.getColumnIndex("image_url"));
+                int recipeIdIndex = cursor.getColumnIndex("recipe_id");
+                int titleIndex = cursor.getColumnIndex("title");
+                int imageUrlIndex = cursor.getColumnIndex("image_url");
 
-                PopularRecipe recipe = new PopularRecipe(recipeId, title, imageUrl);
-                popularRecipeList.add(recipe);
+
+                // Only proceed if all required columns are found
+                if (recipeIdIndex >= 0 && titleIndex >= 0 && imageUrlIndex >= 0) {
+                    int recipeId = cursor.getInt(recipeIdIndex);
+                    String title = cursor.getString(titleIndex);
+                    String imageUrl = cursor.getString(imageUrlIndex);
+
+                    PopularRecipe recipe = new PopularRecipe(recipeId, title, imageUrl);
+                    popularRecipeList.add(recipe);
+                }
             } while (cursor.moveToNext());
         }
 
