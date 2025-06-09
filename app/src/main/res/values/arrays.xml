@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="unit_array">
+        <item>gram</item>
+        <item>kg</item>
+        <item>mL</item>
+        <item>L</item>
+        <item>buah</item>
+        <item>sachet</item>
+        <item>botol</item>
+        <item>sendok makan</item>
+        <item>sendok teh</item>
+    </string-array>
+</resources>
