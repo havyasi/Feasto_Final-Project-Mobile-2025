@@ -1,9 +1,9 @@
 package com.example.foodrink.ui;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,197 +15,173 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foodrink.DBHelper;
-import com.example.foodrink.GlassmorphismActivity;
 import com.example.foodrink.R;
 import com.example.foodrink.adapter.PopularRecipeAdapter;
-import com.example.foodrink.model.PopularRecipe;
-import com.example.foodrink.util.GridSpacingItemDecoration;
+import com.example.foodrink.model.RecipeResponse;
 import com.example.foodrink.util.ThemeManager;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    private TextView tvIngredientCount, tvFavoriteCount;
-    private Button btnQuickSearch;
-    private RecyclerView recyclerViewPopular;
+    private View rootView;
     private DBHelper dbHelper;
-    private PopularRecipeAdapter adapter;
-    private List<PopularRecipe> popularRecipeList;
+    private RecyclerView recyclerViewPopular;
+    private TextView tvIngredientCount, tvFavoriteCount;
+    private ImageButton themeButton;
+    private Button btnQuickSearch;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // Find the theme toggle button
-        ImageButton themeButton = view.findViewById(R.id.themeButton);
+        // Initialize views using the rootView
+        recyclerViewPopular = rootView.findViewById(R.id.recyclerViewPopular);
+        tvIngredientCount = rootView.findViewById(R.id.tvIngredientCount);
+        tvFavoriteCount = rootView.findViewById(R.id.tvFavoriteCount);
+        themeButton = rootView.findViewById(R.id.themeButton);
+        btnQuickSearch = rootView.findViewById(R.id.btnQuickSearch);
 
-        // Update the button icon based on current theme
-        updateThemeIcon(themeButton);
-
-        // Initialize the RecyclerView
-        // Initialize the RecyclerView - use the class field instead of creating a local variable
-        recyclerViewPopular = view.findViewById(R.id.recyclerViewPopular);
-        if (recyclerViewPopular != null) {
-            recyclerViewPopular.setNestedScrollingEnabled(false);
-        }
-
-
-        // Set click listener for theme changes
-        themeButton.setOnClickListener(v -> {
-            boolean isDark = ThemeManager.isDarkTheme(requireContext());
-            ThemeManager.setDarkTheme(requireContext(), !isDark);
-            updateThemeIcon(themeButton);
-        });
-
-        tvIngredientCount = view.findViewById(R.id.tvIngredientCount);
-        tvFavoriteCount = view.findViewById(R.id.tvFavoriteCount);
-        btnQuickSearch = view.findViewById(R.id.btnQuickSearch);
-        recyclerViewPopular = view.findViewById(R.id.recyclerViewPopular);
-
+        // Initialize database helper
         dbHelper = new DBHelper(getContext());
 
-        // Pastikan data dummy populer ada
-        // ensurePopularRecipesExist();
+        // Set up RecyclerView with grid layout (2 columns)
+        recyclerViewPopular.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
-        // Set up RecyclerView untuk popular recipes
-        recyclerViewPopular.setLayoutManager(
-                new GridLayoutManager(getContext(), 2));
-        int spacing = getResources().getDimensionPixelSize(R.dimen.grid_spacing);
-        recyclerViewPopular.addItemDecoration(new GridSpacingItemDecoration(2, spacing, true));
-        recyclerViewPopular.setPadding(-25, 0, 0, 0);
+        // Set up theme toggle button
+        setupThemeButton();
 
-        popularRecipeList = new ArrayList<>();
+        // Load user stats
+        updateUserStats();
 
-        // Load and display data
+        // Load popular recipes
         loadPopularRecipes();
-        updateCounts();
 
-        // Set up quick search button - now navigates directly to Recipe page
+        // Set up quick search button
         btnQuickSearch.setOnClickListener(v -> {
-            RecipeSearchFragment searchFragment = new RecipeSearchFragment();
+            // Navigate to search fragment
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, searchFragment)
+                    .replace(R.id.fragment_container, new RecipeSearchFragment())
                     .addToBackStack(null)
                     .commit();
-
-            BottomNavigationView bottomNav = requireActivity().findViewById(R.id.bottom_navigation);
-            bottomNav.setSelectedItemId(R.id.nav_recipe);
         });
 
-        return view;
+        return rootView;
     }
 
-    private void updateThemeIcon(ImageButton button) {
-        boolean isDark = ThemeManager.isDarkTheme(requireContext());
-        button.setImageResource(isDark ?
-                R.drawable.ic_theme_dark :
-                R.drawable.ic_theme_light);
+    private void setupThemeButton() {
+        // Update button icon based on current theme
+        boolean isDarkMode = ThemeManager.isDarkMode(requireContext());
+        themeButton.setImageResource(isDarkMode ? R.drawable.ic_theme_dark : R.drawable.ic_theme_light);
+
+        // Set click listener to toggle theme
+        themeButton.setOnClickListener(v -> {
+            ThemeManager.toggleTheme(requireContext());
+            // Update button image
+            boolean newDarkMode = ThemeManager.isDarkMode(requireContext());
+            themeButton.setImageResource(newDarkMode ? R.drawable.ic_theme_dark : R.drawable.ic_theme_light);
+        });
+    }
+
+    private void updateUserStats() {
+        // Count ingredients
+        int ingredientCount = countIngredients();
+        tvIngredientCount.setText("Anda memiliki " + ingredientCount + " bahan makanan");
+
+        // Count favorites
+        int favoriteCount = countFavorites();
+        tvFavoriteCount.setText(favoriteCount + " resep favorit");
+    }
+
+    private int countIngredients() {
+        int count = 0;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        try {
+            Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM ingredients", null);
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+        } finally {
+            db.close();
+        }
+        return count;
+    }
+
+    private int countFavorites() {
+        int count = 0;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        try {
+            Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM favorites", null);
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+        } finally {
+            db.close();
+        }
+        return count;
+    }
+
+    private void loadPopularRecipes() {
+        List<RecipeResponse> popularRecipes = new ArrayList<>();
+        DBHelper dbHelper = new DBHelper(getContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+
+        try {
+            Cursor cursor = db.rawQuery("SELECT * FROM popular_recipes", null);
+            Log.d("HomeFragment", "Number of recipes found: " + cursor.getCount());
+
+            if (cursor.getCount() == 0) {
+                // No recipes found, populate the table
+                Log.d("HomeFragment", "No recipes found, populating table");
+                dbHelper.populatePopularRecipes(db);
+
+                // Query again after populating
+                cursor.close();
+                cursor = db.rawQuery("SELECT * FROM popular_recipes", null);
+                Log.d("HomeFragment", "After population: " + cursor.getCount());
+            }
+
+            if (cursor.moveToFirst()) {
+                do {
+                    int recipeIdIndex = cursor.getColumnIndex("recipe_id");
+                    int titleIndex = cursor.getColumnIndex("title");
+                    int imageUrlIndex = cursor.getColumnIndex("image_url");
+
+                    if (recipeIdIndex >= 0 && titleIndex >= 0 && imageUrlIndex >= 0) {
+                        int id = cursor.getInt(recipeIdIndex);
+                        String title = cursor.getString(titleIndex);
+                        String imageUrl = cursor.getString(imageUrlIndex);
+
+                        popularRecipes.add(new RecipeResponse(id, title, imageUrl));
+                    }
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        } finally {
+            db.close();
+        }
+
+        recyclerViewPopular.setHasFixedSize(true);
+        // Set a GridLayoutManager with 2 columns
+        recyclerViewPopular.setLayoutManager(new GridLayoutManager(getContext(), 2));
+
+        // Set adapter with the recipes
+        PopularRecipeAdapter adapter = new PopularRecipeAdapter(popularRecipes);
+        recyclerViewPopular.setAdapter(adapter);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // Update counts every time fragment becomes visible
-        updateCounts();
+        // Refresh user stats when fragment is resumed
+        updateUserStats();
     }
-
-
-    private void loadPopularRecipes() {
-        popularRecipeList.clear();
-
-        // Force refresh the popular recipes table
-        dbHelper.refreshPopularRecipes();
-
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        // Check if table is empty and populate it if needed
-        Cursor checkCursor = db.rawQuery("SELECT COUNT(*) FROM popular_recipes", null);
-        checkCursor.moveToFirst();
-        int count = checkCursor.getInt(0);
-        checkCursor.close();
-
-        if (count == 0) {
-            // Populate database with sample recipes
-            db.close();
-            SQLiteDatabase writeDb = dbHelper.getWritableDatabase();
-            dbHelper.populatePopularRecipes(writeDb);
-            writeDb.close();
-            db = dbHelper.getReadableDatabase();
-        }
-
-        // Query popular recipes
-        Cursor cursor = db.rawQuery("SELECT * FROM popular_recipes", null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                int recipeIdIndex = cursor.getColumnIndex("recipe_id");
-                int titleIndex = cursor.getColumnIndex("title");
-                int imageUrlIndex = cursor.getColumnIndex("image_url");
-
-
-                // Only proceed if all required columns are found
-                if (recipeIdIndex >= 0 && titleIndex >= 0 && imageUrlIndex >= 0) {
-                    int recipeId = cursor.getInt(recipeIdIndex);
-                    String title = cursor.getString(titleIndex);
-                    String imageUrl = cursor.getString(imageUrlIndex);
-
-                    PopularRecipe recipe = new PopularRecipe(recipeId, title, imageUrl);
-                    popularRecipeList.add(recipe);
-                }
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        db.close();
-
-        // Set adapter with the data
-        recyclerViewPopular.setAdapter(new PopularRecipeAdapter(popularRecipeList));
-    }
-
-    private void updateIngredientCount() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM ingredients", null);
-
-        int count = 0;
-        if (cursor.moveToFirst()) {
-            count = cursor.getInt(0);
-        }
-        cursor.close();
-        db.close();
-
-        tvIngredientCount.setText("Anda memiliki " + count + " bahan makanan");
-    }
-
-    private void updateCounts() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        // Count ingredients
-        Cursor ingredientCursor = db.rawQuery("SELECT COUNT(*) FROM ingredients", null);
-        ingredientCursor.moveToFirst();
-        int ingredientCount = ingredientCursor.getInt(0);
-        ingredientCursor.close();
-
-        // Count favorites
-        Cursor favoriteCursor = db.rawQuery("SELECT COUNT(*) FROM favorites", null);
-        favoriteCursor.moveToFirst();
-        int favoriteCount = favoriteCursor.getInt(0);
-        favoriteCursor.close();
-
-        db.close();
-
-        // Update UI
-        tvIngredientCount.setText("Anda memiliki " + ingredientCount + " bahan makanan");
-        tvFavoriteCount.setText(favoriteCount + " resep favorit");
-    }
-
-
 }

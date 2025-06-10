@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "smartpantry.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -38,6 +38,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 "title TEXT, " +
                 "image_url TEXT, " +
                 "summary TEXT)");
+
+        populatePopularRecipes(db);
     }
 
 
@@ -45,7 +47,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Existing upgrade logic...
 
-        if (oldVersion <= 5) {
+        if (oldVersion <= 7) {
             db.execSQL("DROP TABLE IF EXISTS popular_recipes");
             db.execSQL("CREATE TABLE popular_recipes (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -114,11 +116,6 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("image_url", imageUrl);
         values.put("summary", summary);
         db.insert("popular_recipes", null, values);
-    }
-
-    public void refreshPopularRecipes() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        populatePopularRecipes(db);
     }
 
 }

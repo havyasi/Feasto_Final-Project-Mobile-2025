@@ -3,7 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.RecipeFragment">
+
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,11 +15,29 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <Button
-            android:id="@+id/btnSearchRecipes"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Cari Resep dari Bahan Tersedia" />
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#33FFFFFF">
+
+            <Button
+                android:id="@+id/btnSearchRecipes"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Cari Resep dari Bahan Tersedia"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#70FFFFFF"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="#000000"
+                android:background="@android:color/transparent"/>
+
+        </androidx.cardview.widget.CardView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewRecipes"

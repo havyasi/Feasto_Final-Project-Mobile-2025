@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.foodrink.ui.GlassmorphicCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Widget.Foodrink.CardView"
     android:layout_width="150dp"
     android:layout_height="200dp"
     android:layout_margin="8dp"
     app:cardCornerRadius="18dp"
-    app:cardElevation="4dp">
+    app:cardElevation="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:cardCornerRadius="18dp"
         android:orientation="vertical">
 
         <ImageView
@@ -28,7 +28,7 @@
             android:padding="8dp"
             android:fontFamily="@font/poppins_medium"
             android:maxLines="2"
-            android:ellipsize="none"
+            android:ellipsize="end"
             android:textSize="14sp" />
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.example.foodrink.ui.GlassmorphicCardView>

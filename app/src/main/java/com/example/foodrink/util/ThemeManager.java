@@ -3,32 +3,45 @@ package com.example.foodrink.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
-
 import androidx.appcompat.app.AppCompatDelegate;
 
 public class ThemeManager {
-    private static final String PREF_NAME = "theme_prefs";
-    private static final String KEY_THEME_MODE = "theme_mode";
+    private static final String THEME_PREFS = "theme_prefs";
+    private static final String KEY_DARK_MODE = "dark_mode";
 
+    /**
+     * Apply the saved theme preference
+     */
     public static void applyTheme(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        int themeMode = prefs.getInt(KEY_THEME_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-        AppCompatDelegate.setDefaultNightMode(themeMode);
+        boolean isDarkMode = isDarkMode(context);
+        int mode = isDarkMode ?
+                AppCompatDelegate.MODE_NIGHT_YES :
+                AppCompatDelegate.MODE_NIGHT_NO;
+        AppCompatDelegate.setDefaultNightMode(mode);
     }
 
-    public static void setDarkTheme(Context context, boolean isDark) {
-        int themeMode = isDark ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
-
-        SharedPreferences.Editor editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit();
-        editor.putInt(KEY_THEME_MODE, themeMode);
-        editor.apply();
-
-        AppCompatDelegate.setDefaultNightMode(themeMode);
+    /**
+     * Toggle between light and dark themes
+     */
+    public static void toggleTheme(Context context) {
+        boolean currentMode = isDarkMode(context);
+        setDarkMode(context, !currentMode);
+        applyTheme(context);
     }
 
-    public static boolean isDarkTheme(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        int themeMode = prefs.getInt(KEY_THEME_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-        return themeMode == AppCompatDelegate.MODE_NIGHT_YES;
+    /**
+     * Check if dark mode is enabled
+     */
+    public static boolean isDarkMode(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(THEME_PREFS, Context.MODE_PRIVATE);
+        return prefs.getBoolean(KEY_DARK_MODE, false);
+    }
+
+    /**
+     * Save the dark mode setting to preferences
+     */
+    private static void setDarkMode(Context context, boolean isDarkMode) {
+        SharedPreferences prefs = context.getSharedPreferences(THEME_PREFS, Context.MODE_PRIVATE);
+        prefs.edit().putBoolean(KEY_DARK_MODE, isDarkMode).apply();
     }
 }
