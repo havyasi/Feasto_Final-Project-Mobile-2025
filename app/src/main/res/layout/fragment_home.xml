@@ -37,7 +37,6 @@
             android:fontFamily="@font/poppins_bold"
             android:text="Selamat Datang di Feasto!"
             android:textSize="24sp"
-            android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/themeButton"/>
 
@@ -49,7 +48,6 @@
             android:fontFamily="@font/poppins_regular"
             android:text="Mau cari resep apa hari ini?"
             android:textSize="16sp"
-            android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/welcomeText"/>
 
@@ -59,7 +57,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            app:cardCornerRadius="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/asking">
@@ -77,7 +74,6 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins"
                     android:paddingVertical="4dp"
-                    android:textColor="@color/black"
                     android:text="Anda memiliki 0 bahan makanan"
                     android:textSize="16sp" />
 
@@ -88,7 +84,6 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins"
                     android:paddingVertical="4dp"
-                    android:textColor="@color/black"
                     android:text="0 resep favorit"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -124,7 +119,7 @@
             android:text="Resep Populer"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
+
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnQuickSearch" />
 
