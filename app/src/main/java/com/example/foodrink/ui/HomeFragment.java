@@ -1,5 +1,6 @@
 package com.example.foodrink.ui;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foodrink.DBHelper;
+import com.example.foodrink.GlassmorphismActivity;
 import com.example.foodrink.R;
 import com.example.foodrink.adapter.PopularRecipeAdapter;
 import com.example.foodrink.model.PopularRecipe;
@@ -48,6 +50,14 @@ public class HomeFragment extends Fragment {
 
         // Update the button icon based on current theme
         updateThemeIcon(themeButton);
+
+        // Initialize the RecyclerView
+        // Initialize the RecyclerView - use the class field instead of creating a local variable
+        recyclerViewPopular = view.findViewById(R.id.recyclerViewPopular);
+        if (recyclerViewPopular != null) {
+            recyclerViewPopular.setNestedScrollingEnabled(false);
+        }
+
 
         // Set click listener for theme changes
         themeButton.setOnClickListener(v -> {

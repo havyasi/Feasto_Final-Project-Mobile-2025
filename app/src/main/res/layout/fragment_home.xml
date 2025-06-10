@@ -1,91 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".ui.HomeFragment">
 
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp">
+        android:layout_height="wrap_content"
+        android:padding="20dp">
 
-        <LinearLayout
+        <!-- Theme Toggle Button -->
+        <ImageButton
+            android:id="@+id/themeButton"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Toggle Theme"
+            android:padding="0dp"
+            android:layout_marginTop="10dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_theme_light"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <!-- Welcome Text -->
+        <TextView
+            android:id="@+id/welcomeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/poppins_bold"
+            android:text="Selamat Datang di Feasto!"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/themeButton"/>
+
+        <TextView
+            android:id="@+id/asking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-7dp"
+            android:fontFamily="@font/poppins_regular"
+            android:text="Mau cari resep apa hari ini?"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/welcomeText"/>
+
+        <!-- Stats Card - with Glassmorphic effect -->
+        <com.example.foodrink.ui.GlassmorphicCardView
+            android:id="@+id/statsCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/asking">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                android:orientation="vertical"
+                android:padding="16dp">
 
+                <!-- Ingredient Count -->
                 <TextView
-                    android:id="@+id/greetingUser"
+                    android:id="@+id/tvIngredientCount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Halo User, \nMau masak apa hari ini?"
-                    android:textSize="22sp"
-                    android:layout_marginBottom="0dp"
-                    android:fontFamily="@font/poppins_bold"/>
+                    android:fontFamily="@font/poppins"
+                    android:paddingVertical="4dp"
+                    android:text="Anda memiliki 0 bahan makanan"
+                    android:textSize="16sp" />
 
-                <ImageButton
-                    android:id="@+id/themeButton"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_alignParentEnd="true"
-                    android:scaleType="fitCenter"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Theme toggle button" />
-            </RelativeLayout>
+                <!-- Favorite Count -->
+                <TextView
+                    android:id="@+id/tvFavoriteCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:paddingVertical="4dp"
+                    android:text="0 resep favorit"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </com.example.foodrink.ui.GlassmorphicCardView>
 
-            <!-- Ingredient count display -->
-            <TextView
-                android:id="@+id/tvIngredientCount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Anda memiliki 0 bahan makanan"
-                android:textSize="18sp"
-                android:layout_marginBottom="0dp"
-                android:fontFamily="@font/poppins_medium"/>
+        <!-- Quick Search Button -->
+        <Button
+            android:id="@+id/btnQuickSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Cari Resep Cepat"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/statsCard" />
 
-            <TextView
-                android:id="@+id/tvFavoriteCount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="0 resep favorit"
-                android:textSize="16sp"
-                android:layout_marginBottom="0dp" />
+        <!-- Popular Recipes Title -->
+        <TextView
+            android:id="@+id/popularTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Resep Populer"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnQuickSearch" />
 
-            <!-- Section title -->
-            <TextView
-                android:id="@+id/tvPopularTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="3dp"
-                android:paddingHorizontal="0dp"
-                android:text="Resep Populer"
-                android:textSize="21sp"
-                android:fontFamily="@font/poppins_semibold" />
+        <!-- Popular Recipes RecyclerView - modified to have fixed height -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewPopular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/popularTitle" />
 
-            <!-- Recipe grid - adjust paddingHorizontal to match the TextView -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewPopular"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:paddingHorizontal="-25dp"
-                android:overScrollMode="never" />
-
-            <Button
-                android:id="@+id/btnQuickSearch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cari Resep Cepat"
-                android:layout_marginBottom="16dp" />
-
-        </LinearLayout>
-    </ScrollView>
-</FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,6 +1,6 @@
 package com.example.foodrink.adapter;
 
-import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.foodrink.R;
-import com.example.foodrink.RecipeDetailActivity;
 import com.example.foodrink.model.PopularRecipe;
 
 import java.util.List;
 
 public class PopularRecipeAdapter extends RecyclerView.Adapter<PopularRecipeAdapter.ViewHolder> {
 
-    private List<PopularRecipe> recipeList;
+    private final List<PopularRecipe> recipeList;
 
     public PopularRecipeAdapter(List<PopularRecipe> recipeList) {
         this.recipeList = recipeList;
@@ -36,19 +35,19 @@ public class PopularRecipeAdapter extends RecyclerView.Adapter<PopularRecipeAdap
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         PopularRecipe recipe = recipeList.get(position);
+
+        // Set the recipe title
         holder.title.setText(recipe.getTitle());
 
-        Glide.with(holder.itemView.getContext())
-                .load(recipe.getImageUrl())
-                .placeholder(R.drawable.ic_launcher_background)
-                .into(holder.image);
-
-        // Set click listener to open recipe details
-        holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(holder.itemView.getContext(), RecipeDetailActivity.class);
-            intent.putExtra("RECIPE_ID", recipe.getRecipeId());
-            holder.itemView.getContext().startActivity(intent);
-        });
+        // Load image with Glide
+        if (recipe.getImageUrl() != null && !recipe.getImageUrl().isEmpty()) {
+            Glide.with(holder.image.getContext())
+                    .load(recipe.getImageUrl())
+                    .placeholder(R.drawable.ic_recipe)
+                    .into(holder.image);
+        } else {
+            holder.image.setImageResource(R.drawable.ic_recipe);
+        }
     }
 
     @Override
@@ -56,11 +55,11 @@ public class PopularRecipeAdapter extends RecyclerView.Adapter<PopularRecipeAdap
         return recipeList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
         TextView title;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.ivPopularRecipeImage);
             title = itemView.findViewById(R.id.tvPopularRecipeTitle);

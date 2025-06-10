@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".FoodDrinkApplication"
@@ -37,6 +38,10 @@
                 android:value=".MainActivity" />
         </activity>
         <activity android:name=".RecipeDetailActivity" />
+        <activity
+            android:name=".GlassmorphismActivity"
+            android:exported="false">
+        </activity>
     </application>
 
 </manifest>
